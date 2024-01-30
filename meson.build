@@ -5,21 +5,31 @@ project('resiprocate',
   subproject_dir: '.',
     default_options : [
     'c_std=c99',
-    'cpp_std=c++03',
+    'cpp_std=none',
     'warning_level=2'
   ]
 )
 
 host_system = host_machine.system()
 cpu_family = host_machine.cpu_family()
+cc = meson.get_compiler('c')
 
-cpp_project_arguments = [
+project_arguments = [
   '-DUSE_ARES',
 ]
 
-add_project_arguments(cpp_project_arguments, language: 'cpp')
+if host_system == 'windows'
+  project_arguments += [
+    '-DWIN32',
+ ]
+endif
+
+add_project_arguments(project_arguments, language: 'c')
+add_project_arguments(project_arguments, language: 'cpp')
 
 base_dir = include_directories('.')
+winsock2_dep = cc.find_library('ws2_32', required : host_system == 'windows')
+winmm_dep = cc.find_library('winmm', required : host_system == 'windows')
 
 subdir('rutil')
 subdir('resip')

@@ -64,8 +64,13 @@ librutil_sources = [
   'stun/Udp.cxx',
   'hep/HepAgent.cxx',
   'hep/ResipHep.cxx',
-
 ]
+
+if host_system == 'windows'
+  librutil_sources += [
+    'WinCompat.cxx',
+  ]
+endif
 
 librutil_headers = [
   'compat.hxx',
