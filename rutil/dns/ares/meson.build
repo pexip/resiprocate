@@ -43,9 +43,9 @@ endif
 
 install_headers(libresipares_headers, subdir : 'rutil/dns/ares')
 
-libresipares_lib = static_library('libresipares',
+libresipares_lib = static_library('resipares',
     libresipares_sources,
     dependencies : libresipares_deps,
     include_directories: [base_dir, include_directories('.')],
-    install : true,
+    install : false,
 )

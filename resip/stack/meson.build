@@ -329,8 +329,8 @@ libresip_headers = [
 
 install_headers(libresip_headers, subdir : 'resip/stack')
 
-libresip_lib = static_library('libresip',
+libresip_lib = static_library('resip',
     libresip_sources,
     include_directories: [base_dir, include_directories('.')],
-    install : true,
+    install : false,
 )

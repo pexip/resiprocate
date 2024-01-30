@@ -194,10 +194,15 @@ libdum_headers = [
 
 install_headers(libdum_headers, subdir : 'resip/dum')
 
-libdum_lib = static_library('libdum',
+libdum_lib = shared_library('dum',
     libdum_sources,
     include_directories: [base_dir, include_directories('.')],
+    link_whole : [libresip_lib, librutil_lib, libresipares_lib],
+    dependencies : [winsock2_dep, winmm_dep],
     install : true,
 )
+
+pkgconfig = import('pkgconfig')
+pkgconfig.generate(libdum_lib, filebase : 'libdum')
 
 subdir('test')
