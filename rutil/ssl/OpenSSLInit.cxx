@@ -73,10 +73,12 @@ OpenSSLInit::OpenSSLInit()
 	CRYPTO_malloc_debug_init();
 	CRYPTO_set_mem_debug_options(V_CRYPTO_MDEBUG_ALL);
 #else
-	CRYPTO_set_mem_debug(1);
+   //DEPRICATED FOR OPENSSL>=3
+	//CRYPTO_set_mem_debug(1);
 #endif
 
-	CRYPTO_mem_ctrl(CRYPTO_MEM_CHECK_ON);
+   //DEPRICATED FOR OPENSSL>=3
+	//CRYPTO_mem_ctrl(CRYPTO_MEM_CHECK_ON);
 
 	SSL_library_init();
 	SSL_load_error_strings();
