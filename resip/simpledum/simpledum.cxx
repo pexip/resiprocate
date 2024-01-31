@@ -31,19 +31,6 @@
 using namespace resip;
 using namespace std;
 
-struct _SimpleDum {
-   SipStack stackUac;
-   DialogUsageManager* dumUac;   
-   std::string remote_sdp;
-   std::thread sipThread;
-   bool quit;
-
-   _SimpleDum ()
-   : stackUac()
-   {}
-
-};
-
 class testAppDialog : public AppDialog
 {
 public:
@@ -284,13 +271,12 @@ class TestInviteSessionHandler : public InviteSessionHandler, public ClientRegis
 class TestUac : public TestInviteSessionHandler
 {
    public:
-      SimpleDum * mSimpleDum;
       bool done;
       int mNumExpectedMessages;
+      std::string mRemoteSDP;
 
-      TestUac(SimpleDum * simpledum) 
+      TestUac() 
          : TestInviteSessionHandler("UAC"), 
-           mSimpleDum(simpledum),
            done(false),
            mNumExpectedMessages(2)
       {
@@ -307,7 +293,7 @@ class TestUac : public TestInviteSessionHandler
 
          std::stringstream ss;
          ss << sdp << endl;
-         mSimpleDum->remote_sdp = ss.str ();
+         mRemoteSDP = ss.str ();
          is->provideAnswer(sdp);
       }
 
@@ -372,13 +358,25 @@ class TestUac : public TestInviteSessionHandler
       }
 };
 
-void sipStateThread(SimpleDum * simpledum)
-{
-   while (!simpledum->quit){
-        simpledum->stackUac.process(50);
-        while(simpledum->dumUac->process());
-   }   
-}
+
+struct _SimpleDum {
+   SipStack stackUac;
+   DialogUsageManager* dumUac;   
+
+   TestUac mUAC;
+   std::string remote_sdp;
+   std::thread sipThread;
+   bool quit;
+
+   _SimpleDum ()
+   : stackUac()
+   , dumUac(nullptr)
+   , mUAC()
+   , remote_sdp()
+   , sipThread()
+   , quit(false)
+   {}
+};
 
 
 static void
@@ -401,6 +399,13 @@ void simple_dum_free (SimpleDum * simpledum)
    delete simpledum;
 }
 
+void sipStateThread(SimpleDum * simpledum)
+{
+   while (!simpledum->quit){
+        simpledum->stackUac.process(50);
+        while(simpledum->dumUac->process());
+   }   
+}
 
 /***
  * s_conference: VMR name (expected format: "sip:<vmr>@nigthly.pexip.com")
@@ -434,11 +439,9 @@ int simple_dum_connect_sip(SimpleDum * simpledum, const char * s_conference, con
    simpledum->stackUac.addTransport(TCP, 12005);
    SharedPtr<MasterProfile> uacMasterProfile(new MasterProfile);
    simpledum->dumUac->setMasterProfile(uacMasterProfile);
-
-   TestUac uac(simpledum);
-   simpledum->dumUac->setInviteSessionHandler(&uac);
-   simpledum->dumUac->setClientRegistrationHandler(&uac);
-   simpledum->dumUac->addOutOfDialogHandler(OPTIONS, &uac);
+   simpledum->dumUac->setInviteSessionHandler(&simpledum->mUAC);
+   simpledum->dumUac->setClientRegistrationHandler(&simpledum->mUAC);
+   simpledum->dumUac->addOutOfDialogHandler(OPTIONS, &simpledum->mUAC);
 
    auto_ptr<AppDialogSetFactory> uac_dsf(new testAppDialogSetFactory);
    simpledum->dumUac->setAppDialogSetFactory(uac_dsf);
@@ -452,10 +455,10 @@ int simple_dum_connect_sip(SimpleDum * simpledum, const char * s_conference, con
 
    simpledum->sipThread = std::thread(sipStateThread, simpledum);
 
-   while (simpledum->remote_sdp.empty()){
+   while (simpledum->mUAC.mRemoteSDP.empty()){
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
-  *remote_sdp = strdup (simpledum->remote_sdp.c_str());
+  *remote_sdp = strdup (simpledum->mUAC.mRemoteSDP.c_str());
 
    delete mSdp;
    delete txt;
