@@ -177,5 +177,5 @@ install_headers(librutil_headers, subdir : 'rutil')
 librutil_lib = static_library('rutil',
     librutil_sources,
     include_directories: [base_dir, include_directories('.'), include_directories('dns/ares')],
-    install : false,
+    install : true,
 )
