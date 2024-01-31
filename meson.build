@@ -24,6 +24,12 @@ if host_system == 'windows'
  ]
 endif
 
+if host_system == 'linux'
+  project_arguments += [
+    '-D_DEFAULT_SOURCE',
+ ]
+endif
+
 add_project_arguments(project_arguments, language: 'c')
 add_project_arguments(project_arguments, language: 'cpp')
 
