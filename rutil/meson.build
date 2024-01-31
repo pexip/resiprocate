@@ -113,6 +113,61 @@ librutil_headers = [
   'SharedPtr.hxx',
   'SelectInterruptor.hxx',
   'Socket.hxx',
+  'Condition.hxx',
+  'WinCompat.hxx',
+  'vthread.hxx',
+  'ServerProcess.hxx',
+  'Data.hxx',
+  'Lock.hxx',
+  'TimeLimitFifo.hxx',
+  'Mutex.hxx',
+  'NetNs.hxx',
+  'GenericTimerQueue.hxx',
+  'IntrusiveListElement.hxx',
+  'CountStream.hxx',
+  'vmd5.hxx',
+  'XMLCursor.hxx',
+  'PoolBase.hxx',
+  'FdPoll.hxx',
+  'Time.hxx',
+  'Lockable.hxx',
+  'SysLogBuf.hxx',
+  'Inserter.hxx',
+  'DataStream.hxx',
+  'GenericIPAddress.hxx',
+  'AbstractFifo.hxx',
+  'AndroidLogger.hxx',
+  'ParseException.hxx',
+  'BaseException.hxx',
+  'DataException.hxx',
+  'Poll.hxx',
+  'StlPoolAllocator.hxx',
+  'ProducerFifoBuffer.hxx',
+  'DinkyPool.hxx',
+  'ConsumerFifoBuffer.hxx',
+]
+
+install_headers(librutil_headers, subdir : 'rutil')
+
+librutil_ssl_headers = [
+  'ssl/SHA1Stream.hxx',
+  'ssl/OpenSSLInit.hxx',
+]
+install_headers(librutil_ssl_headers, subdir : 'rutil/ssl')
+
+librutil_stun_headers = [
+  'stun/Udp.hxx',
+  'stun/Stun.hxx',
+]
+install_headers(librutil_stun_headers, subdir : 'rutil/stun')
+
+librutil_hep_headers = [
+  'hep/HepAgent.hxx',
+  'hep/ResipHep.hxx',
+]
+install_headers(librutil_hep_headers, subdir : 'rutil/hep')
+
+librutil_dns_headers = [
   'dns/ExternalDnsFactory.hxx',
   'dns/DnsStub.hxx',
   'dns/DnsHostRecord.hxx',
@@ -132,47 +187,8 @@ librutil_headers = [
   'dns/RRVip.hxx',
   'dns/DnsAAAARecord.hxx',
   'dns/DnsResourceRecord.hxx',
-  'Condition.hxx',
-  'WinCompat.hxx',
-  'vthread.hxx',
-  'ServerProcess.hxx',
-  'Data.hxx',
-  'Lock.hxx',
-  'TimeLimitFifo.hxx',
-  'Mutex.hxx',
-  'NetNs.hxx',
-  'GenericTimerQueue.hxx',
-  'IntrusiveListElement.hxx',
-  'ssl/SHA1Stream.hxx',
-  'ssl/OpenSSLInit.hxx',
-  'CountStream.hxx',
-  'vmd5.hxx',
-  'XMLCursor.hxx',
-  'PoolBase.hxx',
-  'FdPoll.hxx',
-  'Time.hxx',
-  'Lockable.hxx',
-  'stun/Udp.hxx',
-  'stun/Stun.hxx',
-  'SysLogBuf.hxx',
-  'Inserter.hxx',
-  'DataStream.hxx',
-  'GenericIPAddress.hxx',
-  'AbstractFifo.hxx',
-  'AndroidLogger.hxx',
-  'ParseException.hxx',
-  'BaseException.hxx',
-  'DataException.hxx',
-  'Poll.hxx',
-  'StlPoolAllocator.hxx',
-  'ProducerFifoBuffer.hxx',
-  'DinkyPool.hxx',
-  'ConsumerFifoBuffer.hxx',
-  'hep/HepAgent.hxx',
-  'hep/ResipHep.hxx',
 ]
-
-install_headers(librutil_headers, subdir : 'rutil')
+install_headers(librutil_dns_headers, subdir : 'rutil/dns')
 
 librutil_lib = static_library('rutil',
     librutil_sources,
