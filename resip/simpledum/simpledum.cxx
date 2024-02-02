@@ -272,41 +272,32 @@ class TestUac : public TestInviteSessionHandler
 {
    public:
       bool done;
-      int mNumExpectedMessages;
       std::string mRemoteSDP;
 
       TestUac() 
          : TestInviteSessionHandler("UAC"), 
-           done(false),
-           mNumExpectedMessages(2)
+           done(false)
       {
       }
 
       virtual ~TestUac()
       {
-//         assert(mNumExpectedMessages == 0);
       }
 
       virtual void onOffer(InviteSessionHandle is, const SipMessage& msg, const SdpContents& sdp)      
       {
          cout << name << ": InviteSession-onOffer(SDP)" << endl;
 
-         std::stringstream ss;
-         ss << sdp << endl;
-         mRemoteSDP = ss.str ();
-         is->provideAnswer(sdp);
+         // std::stringstream ss;
+         // ss << sdp << endl;
+         // mRemoteSDP = ss.str ();
+         // is->provideAnswer(sdp);
       }
 
       using TestInviteSessionHandler::onConnected;
       virtual void onConnected(ClientInviteSessionHandle is, const SipMessage& msg)
       {
          cout << name << ": ClientInviteSession-onConnected - " << msg.brief() << endl;
-         cout << "Connected now - requestingOffer from UAS" << endl;
-         is->requestOffer();
-
-         // At this point no NIT should have been sent
-         assert(!is->getLastSentNITRequest());
-
       }
 
       virtual void onMessageSuccess(InviteSessionHandle is, const SipMessage& msg)
@@ -331,6 +322,15 @@ class TestUac : public TestInviteSessionHandler
             cout << name << ": InviteSession-onTerminated" << endl;
          }
          done = true;
+      }
+
+      virtual void onAnswer(InviteSessionHandle, const SipMessage& msg, const SdpContents& sdp)
+      {
+         cout << name << ": InviteSession-onAnswer(SDP)" << endl;
+
+         std::stringstream ss;
+         ss << sdp << endl;
+         mRemoteSDP = ss.str ();
       }
 };
 
