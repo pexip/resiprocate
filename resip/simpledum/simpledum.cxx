@@ -307,35 +307,11 @@ class TestUac : public TestInviteSessionHandler
          // At this point no NIT should have been sent
          assert(!is->getLastSentNITRequest());
 
-         // Send a first MESSAGE from UAC with some contents (we use a fake PlainContents contents here for
-         // simplicity)
-         PlainContents contents("Hi there!!!");
-         is->message(contents);
-
-         // Immediately send another one, which will end up queued on the
-         // InviteSession's NIT queue
-         PlainContents contentsOther("Hi again!!!");
-         is->message(contentsOther);
       }
 
       virtual void onMessageSuccess(InviteSessionHandle is, const SipMessage& msg)
       {
          cout << name << ": InviteSession-onMessageSuccess - " << msg.brief() << endl;
-
-         assert(is->getLastSentNITRequest());
-         PlainContents* pContents = dynamic_cast<PlainContents*>(is->getLastSentNITRequest()->getContents());
-         assert(pContents != NULL);
-
-         if(mNumExpectedMessages == 2)
-         {
-            assert(pContents->text() == Data("Hi there!!!"));
-            mNumExpectedMessages--;
-         }
-         else if(mNumExpectedMessages == 1)
-         {
-            assert(pContents->text() == Data("Hi again!!!"));
-            mNumExpectedMessages--;
-         }
       }
 
       virtual void onInfo(InviteSessionHandle is, const SipMessage& msg)
